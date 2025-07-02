@@ -1,0 +1,1 @@
+# pokemon_django_test
