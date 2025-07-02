@@ -1,0 +1,342 @@
+{% extends "pokemaker/base.html" %}
+
+{% block title %}Edit {{ object.Name }} - Pokemon Generator{% endblock %}
+
+{% block page_title %}Edit Your Pokemon{% endblock %}
+
+{% block page_description %}Update {{ object.Name }}'s information{% endblock %}
+
+{% block extra_css %}
+<style>
+    .update-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .update-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: none;
+    }
+    
+    .update-header {
+        background: linear-gradient(135deg, var(--pokemon-blue), var(--pokemon-red));
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+    }
+    
+    .update-header h3 {
+        margin: 0;
+        font-weight: bold;
+    }
+
+    /* .pokemon-hero {
+        background: linear-gradient(135deg, var(--pokemon-blue), var(--pokemon-green));
+        color: white;
+        padding: 40px;
+        text-align: center;
+        position: relative;
+    }  */
+
+    .pokemon-image-container {
+        position: relative;
+        z-index: 2;
+        margin-bottom: 20px;
+    }
+
+    .pokemon-image {
+        width: 200px;
+        height: 200px;
+        border-radius: 15px;
+        object-fit: cover;
+        border: 4px solid white;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        transition: transform 0.3s ease;
+    }
+    
+    .pokemon-image:hover {
+        transform: scale(1.05);
+    }
+    
+    .pokemon-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
+
+    .pokemon-types {
+        margin-top: 15px;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .type-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        margin: 5px;
+        border-radius: 25px;
+        color: white;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+    
+    .update-body {
+        padding: 40px;
+    }
+    
+    .form-section {
+        margin-bottom: 35px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid #f8f9fa;
+    }
+    
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: var(--pokemon-blue);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 15px 20px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    
+    .form-control:focus {
+        border-color: var(--pokemon-blue);
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        outline: none;
+        transform: translateY(-2px);
+    }
+    
+    .current-image {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+    
+    .current-image img {
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 3px solid white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0 0 0;
+    }
+    
+    .errorlist li {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        font-size: 0.875rem;
+        border-left: 4px solid #dc3545;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 2px solid #f8f9fa;
+    }
+    
+    .btn-save {
+        background: linear-gradient(45deg, var(--pokemon-green), var(--pokemon-blue));
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-save:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        color: white;
+    }
+    
+    .btn-cancel {
+        background: linear-gradient(45deg, #6c757d, #495057);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .btn-cancel:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        color: white;
+        text-decoration: none;
+    }
+    
+    @media (max-width: 768px) {
+        .update-body {
+            padding: 30px 20px;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .btn-save, .btn-cancel {
+            width: 100%;
+            max-width: 250px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="update-container">
+    <div class="card update-card">
+        <div class="update-header">
+            <div class="pokemon-hero">
+                <div class="pokemon-image-container">
+                    <img src="{{ object.image.url }}" 
+                         alt="{{ object.Name }}" 
+                         class="pokemon-image"
+                         onerror="this.src='/static/images/pokemon-placeholder.png'">
+                </div>
+                <h1 class="pokemon-name">{{ object.Name }}</h1>
+                <div class="pokemon-types">
+                    <span class="type-badge" style="background-color: #F08030;">
+                        {{ object.primary_type }}
+                    </span>
+                    {% if object.secondary_type %}
+                        <span class="type-badge" style="background-color: #6890F0;">
+                            {{ object.secondary_type }}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="update-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-info-circle"></i> Basic Information
+                    </h4>
+                    
+                    <!-- Name Field -->
+                    <div class="form-group">
+                        <label for="{{ form.Name.id_for_label }}" class="form-label">
+                            Pokemon Name
+                        </label>
+                        {{ form.Name }}
+                        {{ form.Name.errors }}
+                    </div>
+                    
+                    <!-- Description Field -->
+                    <div class="form-group">
+                        <label for="{{ form.desc.id_for_label }}" class="form-label">
+                            Description
+                        </label>
+                        {{ form.desc }}
+                        {{ form.desc.errors }}
+                    </div>
+                </div>
+                
+                
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <a href="{% url 'poke_detail' object.pk %}" class="btn-cancel">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form submission handling
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function() {
+            showLoading();
+            showAlert('Updating your Pokemon...', 'info');
+        });
+        
+        // Image preview functionality
+        const imageInput = document.getElementById('{{ form.image.id_for_label }}');
+        if (imageInput) {
+            imageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const currentImg = document.querySelector('.current-image img');
+                        currentImg.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        // Show messages
+        {% if messages %}
+            {% for message in messages %}
+                showAlert('{{ message }}', '{{ message.tags }}');
+            {% endfor %}
+        {% endif %}
+    });
+</script>
+{% endblock %}

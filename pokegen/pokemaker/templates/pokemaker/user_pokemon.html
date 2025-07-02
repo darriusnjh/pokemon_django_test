@@ -1,0 +1,143 @@
+{% extends "pokemaker/base.html" %}
+
+{% block title %}{{ profile.user.username }}'s Profile - Pokemon Generator{% endblock %}
+
+{% block page_title %}{{ profile.user.username }}'s Pokemons{% endblock %}
+
+{% block page_description %}view Pokemons ethically created by {{ profile.user.username }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3>All Pokemon ({{ page_obj.paginator.count }})</h3>
+                    <div class="text-muted">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if page_obj %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Name</th>
+                                        <th>Types</th>
+                                        <th>Owner</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pokemon in page_obj %}
+                                    <tr>
+                                        <td>
+                                            <img src="{{pokemon.image.url}}" 
+                                                 alt="{{ pokemon.Name }}" 
+                                                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                        </td>
+                                        <td class="fw-bold">{{ pokemon.Name }}</td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ pokemon.primary_type }}</span>
+                                            {% if pokemon.secondary_type %}
+                                                <span class="badge bg-secondary">{{ pokemon.secondary_type }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'profile' pokemon.owner.username %}">{{ pokemon.owner.username }}</a>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'poke_detail' pokemon.id %}" class="btn btn-sm btn-outline-primary">
+                                                View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination Controls -->
+                        {% if page_obj.has_other_pages %}
+                        <nav aria-label="Pokemon pagination" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                <!-- First Page -->
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1" aria-label="First">
+                                            <span aria-hidden="true">&laquo;&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                                <!-- Previous Page -->
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </span>
+                                    </li>
+                                {% endif %}
+                                
+                                <!-- Page Numbers -->
+                                {% for num in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == num %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ num }}</span>
+                                        </li>
+                                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                <!-- Next Page -->
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </span>
+                                    </li>
+                                {% endif %}
+                                
+                                <!-- Last Page -->
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                            <span aria-hidden="true">&raquo;&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        
+                        <!-- Pagination Info -->
+                        <div class="text-center text-muted mt-3">
+                            Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} Pokemon
+                        </div>
+                        {% endif %}
+                        
+                    {% else %}
+                        <p class="text-center text-muted">No Pokemon found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

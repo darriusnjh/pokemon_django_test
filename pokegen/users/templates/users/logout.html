@@ -1,0 +1,278 @@
+{% extends "pokemaker/base.html" %}
+
+{% block title %}Logged Out - Pokemon Generator{% endblock %}
+
+{% block page_title %}See You Later, Trainer!{% endblock %}
+
+{% block page_description %}You have been successfully logged out{% endblock %}
+
+{% block extra_css %}
+<style>
+    .logout-container {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .logout-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: none;
+    }
+    
+    .logout-header {
+        background: linear-gradient(135deg, var(--pokemon-yellow), var(--pokemon-red));
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+        position: relative;
+    }
+    
+    .logout-header h3 {
+        margin: 0;
+        font-weight: bold;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .logout-header p {
+        margin: 10px 0 0 0;
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .pokeball-goodbye {
+        font-size: 4rem;
+        margin-bottom: 15px;
+        position: relative;
+        z-index: 1;
+        animation: wave 2s ease-in-out infinite;
+    }
+    
+    @keyframes wave {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-10deg); }
+        75% { transform: rotate(10deg); }
+    }
+    
+    .logout-body {
+        padding: 40px;
+        text-align: center;
+    }
+    
+    .logout-message {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 30px;
+        border-left: 4px solid var(--pokemon-green);
+    }
+    
+    .logout-message h5 {
+        color: var(--pokemon-green);
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+    
+    .logout-message p {
+        margin: 0;
+        color: #666;
+        line-height: 1.6;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn-action {
+        padding: 12px 25px;
+        border-radius: 25px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+    
+    .btn-login {
+        background: linear-gradient(45deg, var(--pokemon-blue), var(--pokemon-green));
+        color: white;
+    }
+    
+    .btn-login:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-home {
+        background: linear-gradient(45deg, var(--pokemon-red), var(--pokemon-yellow));
+        color: white;
+    }
+    
+    .btn-home:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .stats-summary {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border: 2px solid #e9ecef;
+    }
+    
+    .stats-summary h6 {
+        color: var(--pokemon-blue);
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .stat-item {
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--pokemon-red);
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 5px;
+    }
+    
+    @media (max-width: 768px) {
+        .action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .btn-action {
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .logout-body {
+            padding: 30px 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="logout-container">
+    <div class="card logout-card">
+        <div class="logout-header">
+            <div class="pokeball-goodbye">👋</div>
+            <h3>Until Next Time!</h3>
+            <p>Your Pokemon adventure awaits your return</p>
+        </div>
+        
+        <div class="logout-body">
+            <!-- Logout Success Message -->
+            <div class="logout-message">
+                <h5><i class="fas fa-check-circle"></i> Successfully Logged Out</h5>
+                <p>You have been safely logged out of your Pokemon Generator account. All your Pokemon creations are saved and ready for your next visit!</p>
+            </div>
+            
+            <!-- Optional: Show some stats or achievements
+            <div class="stats-summary">
+                <h6><i class="fas fa-trophy"></i> Your Journey So Far</h6>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">Possibilities</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">🎮</div>
+                        <div class="stat-label">Fun Ahead</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">⭐</div>
+                        <div class="stat-label">Adventures</div>
+                    </div>
+                </div>
+            </div> -->
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{% url 'login' %}" class="btn-action btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Log Back In
+                </a>
+                <a href="/" class="btn-action btn-home">
+                    <i class="fas fa-home"></i> Go Home
+                </a>
+            </div>
+            
+            <!-- Additional Options -->
+            <div class="mt-4">
+                <p class="text-muted">
+                    <small>
+                        Want to create an account? 
+                        <a href="{% url 'register' %}" style="color: var(--pokemon-blue);">Sign up here</a>
+                    </small>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show a success message
+        showAlert('You have been successfully logged out!', 'success');
+        
+        // Add some interactive effects
+        const statItems = document.querySelectorAll('.stat-item');
+        statItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                item.style.transition = 'all 0.5s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, index * 200);
+        });
+        
+        // Auto-redirect after 30 seconds (optional)
+        let countdown = 30;
+        const redirectTimer = setInterval(() => {
+            countdown--;
+            if (countdown <= 0) {
+                clearInterval(redirectTimer);
+                window.location.href = '/';
+            }
+        }, 1000);
+        
+        // Clear timer if user interacts with page
+        document.addEventListener('click', () => {
+            clearInterval(redirectTimer);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,465 @@
+{% extends "pokemaker/base.html" %}
+
+{% block title %}Edit Profile - Pokemon Generator{% endblock %}
+
+{% block page_title %}Edit Your Trainer Profile{% endblock %}
+
+{% block page_description %}Update your information and customize your Pokemon journey{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edit-profile-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .edit-profile-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: none;
+    }
+    
+    .edit-header {
+        background: linear-gradient(135deg, var(--pokemon-red), var(--pokemon-yellow));
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+        position: relative;
+    }
+    
+    .edit-header h3 {
+        margin: 0;
+        font-weight: bold;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .edit-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .edit-body {
+        padding: 40px;
+    }
+    
+    .form-section {
+        margin-bottom: 35px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid #f8f9fa;
+    }
+    
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: var(--pokemon-blue);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 15px 20px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        width: 100%;
+        background: #fff;
+    }
+    
+    .form-control:focus {
+        border-color: var(--pokemon-blue);
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        outline: none;
+        transform: translateY(-2px);
+    }
+    
+    .form-control::placeholder {
+        color: #adb5bd;
+    }
+    
+    .current-image {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+    
+    .current-image img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .current-image-info h6 {
+        margin: 0 0 5px 0;
+        color: var(--pokemon-blue);
+        font-weight: bold;
+    }
+    
+    .current-image-info p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+    }
+    
+    .file-input-wrapper input[type=file] {
+        position: absolute;
+        left: -9999px;
+    }
+    
+    .file-input-label {
+        display: block;
+        padding: 15px 20px;
+        background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+        border: 2px dashed #dee2e6;
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #666;
+    }
+    
+    .file-input-label:hover {
+        border-color: var(--pokemon-blue);
+        background: linear-gradient(45deg, #e3f2fd, #f8f9fa);
+        color: var(--pokemon-blue);
+    }
+    
+    .file-input-label i {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        display: block;
+    }
+    
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0 0 0;
+    }
+    
+    .errorlist li {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        font-size: 0.875rem;
+        border-left: 4px solid #dc3545;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 2px solid #f8f9fa;
+    }
+    
+    .btn-save {
+        background: linear-gradient(45deg, var(--pokemon-green), var(--pokemon-blue));
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .btn-save:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        color: white;
+    }
+    
+    .btn-cancel {
+        background: linear-gradient(45deg, #6c757d, #495057);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .btn-cancel:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .help-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    
+    .preview-container {
+        margin-top: 15px;
+        text-align: center;
+    }
+    
+    .preview-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--pokemon-blue);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        display: none;
+    }
+    
+    @media (max-width: 768px) {
+        .edit-body {
+            padding: 30px 20px;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .btn-save, .btn-cancel {
+            width: 100%;
+            max-width: 250px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-profile-container">
+    <div class="card edit-profile-card">
+        <div class="edit-header">
+            <div class="edit-icon">✏️</div>
+            <h3>Edit Your Profile</h3>
+            <p>Customize your trainer information</p>
+        </div>
+        
+        <div class="edit-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- User Information Section -->
+                <div class="form-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-user"></i> Basic Information
+                    </h4>
+                    
+                    <!-- Username Field -->
+                    <div class="form-group">
+                        <label for="{{ u_form.username.id_for_label }}" class="form-label">
+                            Username
+                        </label>
+                        {{ u_form.username }}
+                        {{ u_form.username.errors }}
+                        <div class="help-text">Choose a unique trainer name</div>
+                    </div>
+                    
+                    <!-- Email Field -->
+                    <div class="form-group">
+                        <label for="{{ u_form.email.id_for_label }}" class="form-label">
+                            Email Address
+                        </label>
+                        {{ u_form.email }}
+                        {{ u_form.email.errors }}
+                        <div class="help-text">We'll never share your email with anyone</div>
+                    </div>
+                </div>
+                
+                <!-- Profile Picture Section -->
+                <div class="form-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-camera"></i> Profile Picture
+                    </h4>
+                    
+                    <!-- Current Image Display -->
+                    <div class="current-image">
+                        <img src="{{ user.profile.image.url }}" 
+                             alt="Current Profile Picture"
+                             onerror="this.src='/media/empty_profile.png'">
+                        <div class="current-image-info">
+                            <h6>Current Profile Picture</h6>
+                            <p>Upload a new image to change your avatar</p>
+                        </div>
+                    </div>
+                    
+                    <!-- File Input -->
+                    <div class="form-group">
+                        <div class="file-input-wrapper">
+                            {{ p_form.image }}
+                            <label for="{{ p_form.image.id_for_label }}" class="file-input-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <strong>Choose a new profile picture</strong>
+                                <br>
+                                <small>PNG, JPG, GIF up to 5MB</small>
+                            </label>
+                        </div>
+                        {{ p_form.image.errors }}
+                        
+                        <!-- Image Preview -->
+                        <div class="preview-container">
+                            <img id="image-preview" class="preview-image" alt="Preview">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Description Section -->
+                <div class="form-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-edit"></i> About You
+                    </h4>
+                    
+                    <div class="form-group">
+                        <label for="{{ p_form.desc.id_for_label }}" class="form-label">
+                            Description
+                        </label>
+                        {{ p_form.desc }}
+                        {{ p_form.desc.errors }}
+                        <div class="help-text">Tell other trainers about your Pokemon journey (max 1000 characters)</div>
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <a href="{% url 'my_profile' %}" class="btn-cancel">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Image preview functionality
+        const imageInput = document.getElementById('{{ p_form.image.id_for_label }}');
+        const imagePreview = document.getElementById('image-preview');
+        const fileLabel = document.querySelector('.file-input-label');
+        
+        if (imageInput) {
+            imageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                    
+                    // Update label text
+                    fileLabel.innerHTML = `
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Image selected: ${file.name}</strong>
+                        <br>
+                        <small>Click to choose a different image</small>
+                    `;
+                    fileLabel.style.borderColor = 'var(--pokemon-green)';
+                    fileLabel.style.color = 'var(--pokemon-green)';
+                }
+            });
+        }
+        
+        // Form validation
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            showLoading();
+            
+            // Basic validation
+            const username = document.getElementById('{{ u_form.username.id_for_label }}').value;
+            const email = document.getElementById('{{ u_form.email.id_for_label }}').value;
+            
+            if (!username.trim()) {
+                showAlert('Please enter a username', 'warning');
+                hideLoading();
+                e.preventDefault();
+                return;
+            }
+            
+            if (!email.trim()) {
+                showAlert('Please enter an email address', 'warning');
+                hideLoading();
+                e.preventDefault();
+                return;
+            }
+            
+            showAlert('Updating your profile...', 'info');
+        });
+        
+        // Character counter for description
+        const descField = document.getElementById('{{ p_form.desc.id_for_label }}');
+        if (descField) {
+            const maxLength = 1000;
+            const counter = document.createElement('div');
+            counter.className = 'help-text';
+            counter.style.textAlign = 'right';
+            descField.parentNode.appendChild(counter);
+            
+            function updateCounter() {
+                const remaining = maxLength - descField.value.length;
+                counter.textContent = `${remaining} characters remaining`;
+                counter.style.color = remaining < 50 ? 'var(--pokemon-red)' : '#6c757d';
+            }
+            
+            descField.addEventListener('input', updateCounter);
+            updateCounter();
+        }
+        
+        // Show messages
+        {% if messages %}
+            {% for message in messages %}
+                showAlert('{{ message }}', '{{ message.tags }}');
+            {% endfor %}
+        {% endif %}
+    });
+</script>
+{% endblock %}

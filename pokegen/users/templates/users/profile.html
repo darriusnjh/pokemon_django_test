@@ -1,0 +1,372 @@
+{% extends "pokemaker/base.html" %}
+
+{% block title %}{{ profile.user.username }}'s Profile - Pokemon Generator{% endblock %}
+
+{% block page_title %}Trainer Profile{% endblock %}
+
+{% block page_description %}{{ profile.user.username }}'s Pokemon journey and achievements{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .profile-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: none;
+        margin-bottom: 30px;
+    }
+    
+    .profile-header {
+        background: linear-gradient(135deg, var(--pokemon-blue), var(--pokemon-green));
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+        position: relative;
+    }
+    
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+    }
+    
+    .profile-avatar {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 20px;
+        z-index: 2;
+    }
+    
+    .profile-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid white;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        transition: transform 0.3s ease;
+    }
+    
+    .profile-image:hover {
+        transform: scale(1.05);
+    }
+    
+    .profile-badge {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: var(--pokemon-yellow);
+        color: #333;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.8rem;
+        border: 2px solid white;
+    }
+    
+    .profile-username {
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 0;
+        position: relative;
+        z-index: 2;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .profile-title {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin: 5px 0 0 0;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .profile-body {
+        padding: 40px;
+    }
+    
+    .profile-section {
+        margin-bottom: 30px;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: var(--pokemon-blue);
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .profile-description {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 25px;
+        border-left: 4px solid var(--pokemon-blue);
+        line-height: 1.6;
+        color: #555;
+        font-size: 1rem;
+    }
+    
+    .empty-description {
+        color: #999;
+        font-style: italic;
+        text-align: center;
+        padding: 40px 20px;
+    }
+    
+    .profile-stats {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        border: 2px solid #e9ecef;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .stat-item {
+        padding: 20px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-item:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--pokemon-red);
+        margin-bottom: 5px;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .profile-actions {
+        text-align: center;
+        margin-top: 30px;
+    }
+    
+    .btn-edit {
+        background: linear-gradient(45deg, var(--pokemon-red), var(--pokemon-yellow));
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        margin: 0 10px;
+    }
+    
+    .btn-edit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-pokemon {
+        background: linear-gradient(45deg, var(--pokemon-blue), var(--pokemon-green));
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        margin: 0 10px;
+    }
+    
+    .btn-pokemon:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .join-date {
+        font-size: 0.9rem;
+        color: rgba(255,255,255,0.8);
+        position: relative;
+        z-index: 2;
+    }
+    
+    @media (max-width: 768px) {
+        .profile-body {
+            padding: 30px 20px;
+        }
+        
+        .profile-username {
+            font-size: 1.5rem;
+        }
+        
+        .profile-image {
+            width: 100px;
+            height: 100px;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .profile-actions {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .btn-edit, .btn-pokemon {
+            margin: 5px 0;
+            width: 100%;
+            max-width: 250px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="card profile-card">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <img src="{{ profile.image.url }}" 
+                     alt="{{ profile.user.username }}'s Profile" 
+                     class="profile-image"
+                     onerror="this.src='/media/empty_profile.png'">
+                <div class="profile-badge">🎮</div>
+            </div>
+            <h1 class="profile-username">{{ profile.user.username }}</h1>
+            <p class="profile-title">Pokemon Trainer</p>
+            <p class="join-date">
+                <i class="fas fa-calendar-alt"></i> 
+                Joined {{ profile.user.date_joined|date:"F Y" }}
+            </p>
+        </div>
+        
+        <!-- Profile Body -->
+        <div class="profile-body">
+            <!-- About Section -->
+            <div class="profile-section">
+                <h3 class="section-title">
+                    <i class="fas fa-user"></i> About Me
+                </h3>
+                {% if profile.desc %}
+                    <div class="profile-description">
+                        {{ profile.desc|linebreaks }}
+                    </div>
+                {% else %}
+                    <div class="profile-description empty-description">
+                        <i class="fas fa-edit"></i>
+                        <p>No description yet. Tell the world about your Pokemon journey!</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Stats Section -->
+            <div class="profile-section">
+                <h3 class="section-title">
+                    <i class="fas fa-chart-bar"></i> Trainer Stats
+                </h3>
+                <div class="profile-stats">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">{{ pokemon_count|default:"0" }}</div>
+                            <div class="stat-label">Pokemon Created</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">{{ profile.user.date_joined|timesince|truncatewords:1 }}</div>
+                            <div class="stat-label">Training Time</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">⭐</div>
+                            <div class="stat-label">Trainer Rank</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">∞</div>
+                            <div class="stat-label">Potential</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            {% if user == profile.user %}
+                <div class="profile-actions">
+                    <a href="{% url 'edit_profile' %}" class="btn-edit">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </a>
+                    <a href="{% url 'poke_user' user.username %}" class="btn-pokemon">
+                        <i class="fas fa-list"></i> My Pokemon
+                    </a>
+                </div>
+            {% else %}
+                <div class="profile-actions">
+                    <a href="{% url 'poke_user' profile.user.username %}" class="btn-pokemon">
+                        <i class="fas fa-eye"></i> View {{ profile.user.username }}'s Pokemon
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate stats on page load
+        const statItems = document.querySelectorAll('.stat-item');
+        statItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                item.style.transition = 'all 0.6s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, index * 150);
+        });
+        
+        // Add profile image error handling
+        const profileImage = document.querySelector('.profile-image');
+        if (profileImage) {
+            profileImage.addEventListener('error', function() {
+                this.src = '/media/empty_profile.png';
+            });
+        }
+        
+        // Show welcome message for profile owner
+        {% if user == profile.user %}
+            showAlert('Welcome to your profile, {{ user.username }}!', 'info');
+        {% endif %}
+    });
+</script>
+{% endblock %}

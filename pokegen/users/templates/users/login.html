@@ -1,0 +1,286 @@
+{% extends "pokemaker/base.html" %}
+
+{% block title %}Login - Pokemon Generator{% endblock %}
+
+{% block page_title %}Welcome Back, Trainer!{% endblock %}
+
+{% block page_description %}Sign in to continue your Pokemon journey{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        max-width: 450px;
+        margin: 0 auto;
+    }
+    
+    .login-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: none;
+    }
+    
+    .login-header {
+        background: linear-gradient(135deg, var(--pokemon-blue), var(--pokemon-green));
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+    }
+    
+    .login-header h3 {
+        margin: 0;
+        font-weight: bold;
+    }
+    
+    .pokeball-icon {
+        font-size: 3.5rem;
+        margin-bottom: 15px;
+    }
+    
+    .login-body {
+        padding: 40px;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 15px 20px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    
+    .form-control:focus {
+        border-color: var(--pokemon-blue);
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        outline: none;
+    }
+    
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0 0 0;
+    }
+    
+    .errorlist li {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        font-size: 0.875rem;
+        border-left: 4px solid #dc3545;
+    }
+    
+    .btn-login {
+        background: linear-gradient(45deg, var(--pokemon-blue), var(--pokemon-green));
+        border: none;
+        color: white;
+        font-weight: bold;
+        padding: 15px 30px;
+        border-radius: 25px;
+        width: 100%;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+    
+    .btn-login:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        color: white;
+    }
+    
+    .login-options {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 25px;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .login-options a {
+        color: var(--pokemon-blue);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+        margin: 0 10px;
+    }
+    
+    .login-options a:hover {
+        color: var(--pokemon-red);
+        text-decoration: underline;
+    }
+
+    .trainer-header {
+    text-align: center;
+    padding: 40px 30px;
+    background: linear-gradient(135deg, var(--pokemon-blue), var(--pokemon-green));
+    color: white;
+    }
+
+    .trainer-title {
+        margin: 0 0 25px 0;
+        font-size: 1.8rem;
+        font-weight: bold;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .trainer-avatar {
+        position: relative;
+        display: inline-block;
+    }
+
+    .avatar-image {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid white;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 2;
+    }
+
+    .avatar-ring {
+        position: absolute;
+        top: -8px;
+        left: -8px;
+        width: calc(100% + 16px);
+        height: calc(100% + 16px);
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(1.1);
+            opacity: 0;
+        }
+    }
+
+    .trainer-avatar:hover .avatar-image {
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="trainer-header">
+        <h3 class="trainer-title">Trainer Login</h3>
+        <div class="trainer-avatar">
+            <img src="/media/empty_profile.png" alt="Trainer Profile" class="avatar-image">
+            <div class="avatar-ring"></div>
+        </div>
+    </div>
+
+        
+        <div class="login-body">
+            <!-- Login Form - Django's LoginView automatically provides the form -->
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Display non-field errors -->
+                {% if form.non_field_errors %}
+                    <div class="form-group">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+                
+                <!-- Username Field -->
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">
+                        <i class="fas fa-user"></i> Username
+                    </label>
+                    {{ form.username }}
+                    {{ form.username.errors }}
+                </div>
+                
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    {{ form.password }}
+                    {{ form.password.errors }}
+                </div>
+                
+                <!-- Hidden next field -->
+                {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                {% endif %}
+                
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+            
+            <!-- Login Options -->
+            <div class="login-options">
+                <div class="mb-2">
+                    <a href="#">Forgot your password?</a>
+                </div>
+                <div>
+                    Don't have an account? 
+                    <a href="{% url 'register' %}">Create one here</a>
+                </div>
+                <div class="mt-2">
+                    <a href="/">← Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add Bootstrap classes to form fields
+        const formInputs = document.querySelectorAll('input[type="text"], input[type="password"]');
+        formInputs.forEach(input => {
+            input.classList.add('form-control');
+            input.placeholder = input.name === 'username' ? 'Enter your username' : 'Enter your password';
+        });
+        
+        // Auto-focus username field
+        const usernameField = document.querySelector('input[name="username"]');
+        if (usernameField && !usernameField.value) {
+            usernameField.focus();
+        }
+        
+        // Form submission handling
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function() {
+            showLoading();
+        });
+        
+        // Show any Django messages
+        {% if messages %}
+            {% for message in messages %}
+                showAlert('{{ message }}', '{{ message.tags }}');
+            {% endfor %}
+        {% endif %}
+    });
+</script>
+{% endblock %}

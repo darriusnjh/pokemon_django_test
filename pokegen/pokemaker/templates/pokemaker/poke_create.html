@@ -1,0 +1,603 @@
+{% extends "pokemaker/base.html" %}
+
+{% block title %}Create New Pokemon - Pokemon Generator{% endblock %}
+
+{% block page_title %}Create Your Pokemon{% endblock %}
+
+{% block page_description %}Bring your imagination to life - design your unique Pokemon{% endblock %}
+
+{% block extra_css %}
+<style>
+    .create-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .create-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: none;
+    }
+    
+    .create-header {
+        background: linear-gradient(135deg, var(--pokemon-blue), var(--pokemon-green));
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+        position: relative;
+    }
+    
+    .create-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>');
+    }
+    
+    .create-header h3 {
+        margin: 0;
+        font-weight: bold;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .create-header p {
+        margin: 10px 0 0 0;
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .create-icon {
+        font-size: 3.5rem;
+        margin-bottom: 15px;
+        position: relative;
+        z-index: 1;
+        animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+        60% { transform: translateY(-5px); }
+    }
+    
+    .create-body {
+        padding: 40px;
+    }
+    
+    .form-section {
+        margin-bottom: 35px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid #f8f9fa;
+    }
+    
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: var(--pokemon-blue);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 15px 20px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        width: 100%;
+        background: #fff;
+    }
+    
+    .form-control:focus {
+        border-color: var(--pokemon-blue);
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        outline: none;
+        transform: translateY(-2px);
+    }
+    
+    .form-control::placeholder {
+        color: #adb5bd;
+    }
+    
+    .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+    }
+    
+    .file-input-wrapper input[type=file] {
+        position: absolute;
+        left: -9999px;
+    }
+    
+    .file-input-label {
+        display: block;
+        padding: 20px;
+        background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+        border: 2px dashed #dee2e6;
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #666;
+    }
+    
+    .file-input-label:hover {
+        border-color: var(--pokemon-blue);
+        background: linear-gradient(45deg, #e3f2fd, #f8f9fa);
+        color: var(--pokemon-blue);
+    }
+    
+    .file-input-label i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        display: block;
+    }
+    
+    .preview-container {
+        margin-top: 15px;
+        text-align: center;
+    }
+    
+    .preview-image {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 15px;
+        object-fit: cover;
+        border: 3px solid var(--pokemon-blue);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        display: none;
+    }
+    
+    .type-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+    
+    .type-preview {
+        margin-top: 15px;
+        text-align: center;
+    }
+    
+    .type-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        margin: 5px;
+        border-radius: 25px;
+        color: white;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+    
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0 0 0;
+    }
+    
+    .errorlist li {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        font-size: 0.875rem;
+        border-left: 4px solid #dc3545;
+        animation: shake 0.5s ease-in-out;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 2px solid #f8f9fa;
+    }
+    
+    .btn-create {
+        background: linear-gradient(45deg, var(--pokemon-red), var(--pokemon-yellow));
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-create::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+    
+    .btn-create:hover::before {
+        left: 100%;
+    }
+    
+    .btn-create:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        color: white;
+    }
+    
+    .btn-cancel {
+        background: linear-gradient(45deg, #6c757d, #495057);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .btn-cancel:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .help-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    
+    .creation-tips {
+        background: #e3f2fd;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-left: 4px solid var(--pokemon-blue);
+    }
+    
+    .creation-tips h5 {
+        color: var(--pokemon-blue);
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    
+    .creation-tips ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+    
+    .creation-tips li {
+        margin-bottom: 5px;
+        color: #555;
+    }
+    
+    @media (max-width: 768px) {
+        .create-body {
+            padding: 30px 20px;
+        }
+        
+        .type-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .btn-create, .btn-cancel {
+            width: 100%;
+            max-width: 250px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="create-container">
+    <div class="card create-card">
+        <div class="create-header">
+            <div class="create-icon">🎨</div>
+            <h3>Create Your Pokemon</h3>
+            <p>Design a unique Pokemon that reflects your imagination</p>
+        </div>
+        
+        <div class="create-body">
+            <!-- Creation Tips -->
+            <div class="creation-tips">
+                <h5>💡 Creation Tips</h5>
+                <ul>
+                    <li>Choose a unique name that represents your Pokemon's personality</li>
+                    <li>Write a detailed description of your Pokemon's abilities and characteristics</li>
+                    <li>Upload a clear image that showcases your Pokemon's design</li>
+                    <li>Select types that match your Pokemon's theme and abilities</li>
+                </ul>
+            </div>
+            
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-info-circle"></i> Basic Information
+                    </h4>
+                    
+                    <!-- Name Field -->
+                    <div class="form-group">
+                        <label for="{{ form.Name.id_for_label }}" class="form-label">
+                            Pokemon Name *
+                        </label>
+                        <input type="text" 
+                               name="{{ form.Name.name }}" 
+                               id="{{ form.Name.id_for_label }}"
+                               class="form-control" 
+                               placeholder="Enter your Pokemon's name"
+                               maxlength="20"
+                               required>
+                        {{ form.Name.errors }}
+                        <div class="help-text">Choose a unique name (max 20 characters)</div>
+                    </div>
+                    
+                    <!-- Description Field -->
+                    <div class="form-group">
+                        <label for="{{ form.desc.id_for_label }}" class="form-label">
+                            Description *
+                        </label>
+                        <textarea name="{{ form.desc.name }}" 
+                                  id="{{ form.desc.id_for_label }}"
+                                  class="form-control" 
+                                  placeholder="Describe your Pokemon's appearance, abilities, and personality..."
+                                  rows="5"
+                                  required></textarea>
+                        {{ form.desc.errors }}
+                        <div class="help-text">Describe your Pokemon's unique characteristics and abilities</div>
+                    </div>
+                </div>
+                
+                <!-- Pokemon Image -->
+                <div class="form-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-camera"></i> Pokemon Image
+                    </h4>
+                    
+                    <div class="form-group">
+                        <div class="file-input-wrapper">
+                            <input type="file" 
+                                   name="{{ form.image.name }}" 
+                                   id="{{ form.image.id_for_label }}"
+                                   accept="image/*">
+                            <label for="{{ form.image.id_for_label }}" class="file-input-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <strong>Upload Pokemon Image</strong>
+                                <br>
+                                <small>PNG, JPG, GIF up to 5MB</small>
+                            </label>
+                        </div>
+                        {{ form.image.errors }}
+                        
+                        <!-- Image Preview -->
+                        <div class="preview-container">
+                            <img id="image-preview" class="preview-image" alt="Preview">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pokemon Types -->
+                <div class="form-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-tags"></i> Pokemon Types
+                    </h4>
+                    
+                    <div class="type-grid">
+                        <div class="form-group">
+                            <label for="{{ form.primary_type.id_for_label }}" class="form-label">
+                                Primary Type *
+                            </label>
+                            <select name="{{ form.primary_type.name }}" 
+                                    id="{{ form.primary_type.id_for_label }}"
+                                    class="form-control" 
+                                    required>
+                                <option value="">Select Primary Type</option>
+                                {% for value, label in form.primary_type.field.choices %}
+                                    {% if value %}
+                                        <option value="{{ value }}">{{ label }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            {{ form.primary_type.errors }}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.secondary_type.id_for_label }}" class="form-label">
+                                Secondary Type (Optional)
+                            </label>
+                            <select name="{{ form.secondary_type.name }}" 
+                                    id="{{ form.secondary_type.id_for_label }}"
+                                    class="form-control">
+                                <option value="">No Secondary Type</option>
+                                {% for value, label in form.secondary_type.field.choices %}
+                                    {% if value %}
+                                        <option value="{{ value }}">{{ label }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            {{ form.secondary_type.errors }}
+                        </div>
+                    </div>
+                    
+                    <!-- Type Preview -->
+                    <div class="type-preview">
+                        <span id="primary-badge" class="type-badge" style="display: none;"></span>
+                        <span id="secondary-badge" class="type-badge" style="display: none;"></span>
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-create">
+                        <i class="fas fa-plus"></i> Create Pokemon
+                    </button>
+                    <a href="{% url 'poke_home' %}" class="btn-cancel">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Type colors mapping
+        const typeColors = {
+            'normal': '#A8A878', 'fire': '#F08030', 'water': '#6890F0',
+            'electric': '#F8D030', 'grass': '#78C850', 'ice': '#98D8D8',
+            'fighting': '#C03028', 'poison': '#A040A0', 'ground': '#E0C068',
+            'flying': '#A890F0', 'psychic': '#F85888', 'bug': '#A8B820',
+            'rock': '#B8A038', 'ghost': '#705898', 'dragon': '#7038F8',
+            'dark': '#705848', 'steel': '#B8B8D0', 'fairy': '#EE99AC'
+        };
+        
+        // Image preview functionality
+        const imageInput = document.getElementById('{{ form.image.id_for_label }}');
+        const imagePreview = document.getElementById('image-preview');
+        const fileLabel = document.querySelector('.file-input-label');
+        
+        if (imageInput) {
+            imageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                    
+                    // Update label
+                    fileLabel.innerHTML = `
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Image selected: ${file.name}</strong>
+                        <br>
+                        <small>Click to choose a different image</small>
+                    `;
+                    fileLabel.style.borderColor = 'var(--pokemon-green)';
+                    fileLabel.style.color = 'var(--pokemon-green)';
+                }
+            });
+        }
+        
+        // Type preview functionality
+        const primarySelect = document.getElementById('{{ form.primary_type.id_for_label }}');
+        const secondarySelect = document.getElementById('{{ form.secondary_type.id_for_label }}');
+        const primaryBadge = document.getElementById('primary-badge');
+        const secondaryBadge = document.getElementById('secondary-badge');
+        
+        function updateTypeBadges() {
+            const primaryType = primarySelect.value;
+            const secondaryType = secondarySelect.value;
+            
+            if (primaryType) {
+                primaryBadge.textContent = primaryType;
+                primaryBadge.style.backgroundColor = typeColors[primaryType] || '#68A090';
+                primaryBadge.style.display = 'inline-block';
+            } else {
+                primaryBadge.style.display = 'none';
+            }
+            
+            if (secondaryType) {
+                secondaryBadge.textContent = secondaryType;
+                secondaryBadge.style.backgroundColor = typeColors[secondaryType] || '#68A090';
+                secondaryBadge.style.display = 'inline-block';
+            } else {
+                secondaryBadge.style.display = 'none';
+            }
+        }
+        
+        primarySelect.addEventListener('change', updateTypeBadges);
+        secondarySelect.addEventListener('change', updateTypeBadges);
+        
+        // Form submission
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            showLoading();
+            showAlert('Creating your Pokemon...', 'info');
+            
+            // Basic validation
+            const name = document.getElementById('{{ form.Name.id_for_label }}').value;
+            const desc = document.getElementById('{{ form.desc.id_for_label }}').value;
+            const primaryType = primarySelect.value;
+            
+            if (!name.trim() || !desc.trim() || !primaryType) {
+                showAlert('Please fill in all required fields', 'warning');
+                hideLoading();
+                e.preventDefault();
+                return;
+            }
+        });
+        
+        // Character counter for name
+        const nameField = document.getElementById('{{ form.Name.id_for_label }}');
+        if (nameField) {
+            const counter = document.createElement('div');
+            counter.className = 'help-text';
+            counter.style.textAlign = 'right';
+            nameField.parentNode.appendChild(counter);
+            
+            function updateNameCounter() {
+                const remaining = 20 - nameField.value.length;
+                counter.textContent = `${remaining} characters remaining`;
+                counter.style.color = remaining < 5 ? 'var(--pokemon-red)' : '#6c757d';
+            }
+            
+            nameField.addEventListener('input', updateNameCounter);
+            updateNameCounter();
+        }
+    });
+</script>
+{% endblock %}
