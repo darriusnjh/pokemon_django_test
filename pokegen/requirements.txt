@@ -1,7 +1,7 @@
-datasets 
+datasets
+diffusers
 huggingface_hub 
 Pillow
-wandb
 accelerate>=0.22.0
 torchvision
 transformers>=4.25.1
