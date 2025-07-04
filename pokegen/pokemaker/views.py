@@ -42,7 +42,7 @@ def poke_prompt(request):
             types_str = " and ".join(types)
             prompt = f"{look} of type {types_str}"
             diffusion = DiffusionService()
-            image_path = "generated_poke/Catopus.png"  # diffusion.generate_image(prompt, Name)
+            image_path = diffusion.generate_image(prompt, Name)
 
             pokemon = Pokemon.objects.create(Name=Name,
                                              desc="",
