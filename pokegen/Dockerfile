@@ -3,7 +3,12 @@ FROM pytorch/pytorch:2.2.2-cuda11.8-cudnn8-runtime
 ENV PYTHONUNBUFFERED 1
 
 # Install build dependencies (for Pillow, psycopg2, etc.)
-RUN apk add --no-cache gcc musl-dev libffi-dev jpeg-dev zlib-dev
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libffi-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /pokegen
 
