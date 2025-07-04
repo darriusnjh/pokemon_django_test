@@ -10,3 +10,4 @@ tensorboard
 Jinja2
 datasets
 peft==0.15.0
+django
