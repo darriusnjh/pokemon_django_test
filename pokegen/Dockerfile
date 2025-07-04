@@ -1,4 +1,4 @@
-FROM python:3.9-alpine
+FROM pytorch/pytorch:2.2.2-cuda11.8-cudnn8-runtime
 
 ENV PYTHONUNBUFFERED 1
 
@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Expose port 8000
-EXPOSE 8080
+EXPOSE 8000
 
 # Run the Django server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8080"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
