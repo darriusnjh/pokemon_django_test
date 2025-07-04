@@ -51,10 +51,6 @@ def poke_prompt(request):
                                              secondary_type=types[1] if len(types)>1 else None,
                                              owner=user
                                              )
-            try:
-                os.remove("media/"+image_path)
-            except Exception as e:
-                print(e)
 
             return redirect('poke_detail', pk=pokemon.pk) # this will define where the submit button takes the user
     else:
